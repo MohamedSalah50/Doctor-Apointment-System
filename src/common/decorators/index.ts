@@ -1,0 +1,7 @@
+export * from "./match.decorator"
+export * from "./checkAge.decorator"
+export * from "./match.decorator"
+export * from "./credentials.decorator"
+export * from "./update.decorator"
+export * from "./upload-file.decorator"
+export * from "./permissions.decorator"
