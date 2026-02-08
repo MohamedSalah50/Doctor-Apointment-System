@@ -16,7 +16,7 @@ import { LoginResponse } from './entities/auth.entity';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('/signup')
   async signup(

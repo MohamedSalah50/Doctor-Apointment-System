@@ -14,19 +14,15 @@ import { DoctorStatusEnum, IDoctorPublicProfile } from 'src/common';
 @Injectable()
 export class DoctorService {
   constructor(
-    private readonly doctorRepository: DoctorRepository,
+    private readonly doctorRepository: DoctorRepository
   ) { }
 
-  /**
-   * Get all doctors with filters and search
-   */
   async getAllDoctors(filters: DoctorSearchFiltersDto) {
     const {
       specialty,
       minRating,
       isVerified,
       isAcceptingNewPatients,
-      city,
       minFee,
       maxFee,
       search,
@@ -75,12 +71,6 @@ export class DoctorService {
         ],
       });
     }
-
-    // const total = await this.doctorRepository.countDocuments({
-    //   filter: { $and: query },
-    // });
-
-    // Sort options
     const sort: any = {};
     sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
@@ -117,9 +107,7 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Get doctor by ID (public profile)
-   */
+
   async getDoctorById(doctorId: string) {
     if (!Types.ObjectId.isValid(doctorId)) {
       throw new BadRequestException('Invalid doctor ID');
@@ -147,9 +135,7 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Get my doctor profile (for logged-in doctors)
-   */
+
   async getMyProfile(userId: string) {
     const doctor = await this.doctorRepository.findOne({
       filter: { userId: new Types.ObjectId(userId) },
@@ -171,9 +157,7 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Update my doctor profile
-   */
+
   async updateMyProfile(userId: string, updateDoctorDto: UpdateDoctorDto) {
     const doctor = await this.doctorRepository.findOne({
       filter: { userId: new Types.ObjectId(userId) },
@@ -195,10 +179,8 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Get doctor stats
-   */
-  async getMyStats(userId: string) {
+
+  async getMyStats(userId: Types.ObjectId) {
     const doctor = await this.doctorRepository.findOne({
       filter: { userId: new Types.ObjectId(userId) },
     });
@@ -220,16 +202,11 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Search doctors
-   */
+
   async searchDoctors(searchTerm: string, filters: DoctorSearchFiltersDto) {
     return this.getAllDoctors({ ...filters, search: searchTerm });
   }
 
-  /**
-   * Get top-rated doctors
-   */
   async getTopRatedDoctors(limit: number = 10) {
     const doctors = await this.doctorRepository.find({
       filter: { deletedAt: null, isVerified: true, rating: { $gte: 4 } },
@@ -254,16 +231,12 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Get doctors by specialty
-   */
+
   async getDoctorsBySpecialty(specialty: string, filters: DoctorSearchFiltersDto) {
     return this.getAllDoctors({ ...filters, specialty: specialty as any });
   }
 
-  /**
-   * Create doctor profile (called during signup)
-   */
+
   async createProfile(userId: Types.ObjectId, data: any) {
     const existingDoctor = await this.doctorRepository.findOne({
       filter: { userId },
@@ -295,9 +268,7 @@ export class DoctorService {
     return doctor;
   }
 
-  /**
-   * Add clinic to doctor
-   */
+
   async addClinic(userId: string, clinicId: string) {
     if (!Types.ObjectId.isValid(clinicId)) {
       throw new BadRequestException('Invalid clinic ID');
@@ -321,9 +292,6 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Remove clinic from doctor
-   */
   async removeClinic(userId: string, clinicId: string) {
     if (!Types.ObjectId.isValid(clinicId)) {
       throw new BadRequestException('Invalid clinic ID');
@@ -347,9 +315,7 @@ export class DoctorService {
     };
   }
 
-  /**
-   * Transform doctor data to public profile
-   */
+
   private transformToPublicProfile(doctor: any): IDoctorPublicProfile {
     const userData = doctor.userId || {};
     const clinicsData = doctor.clinics || [];

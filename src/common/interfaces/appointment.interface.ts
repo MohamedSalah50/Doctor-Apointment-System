@@ -79,6 +79,9 @@ export interface IAppointment {
     noShowCount?: number; // عدد مرات عدم الحضور
   };
 
+
+  // fees:Number
+
   // ==================== SOFT DELETE ====================
   deletedAt?: Date;
 

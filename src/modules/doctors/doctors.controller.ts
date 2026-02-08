@@ -9,19 +9,24 @@ import {
   Body,
   Param,
   Query,
-  UseGuards,
   Request,
 } from '@nestjs/common';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { DoctorSearchFiltersDto } from './dto/doctor-search-filters.dto';
 
-import { RoleEnum } from 'src/common';
+import { type IAuthRequest, RoleEnum } from 'src/common';
 import { DoctorService } from './doctors.service';
 import { auth } from 'src/common/decorators/auth.decorator';
+import { ScheduleService } from '../schedule/schedule.service';
+import { GetAvailableSlotsDto } from '../schedule/dto/get-available-slots.dto';
 
+@auth([RoleEnum.doctor])
 @Controller('doctors')
 export class DoctorController {
-  constructor(private readonly doctorService: DoctorService) { }
+  constructor(
+    private readonly doctorService: DoctorService,
+    private readonly scheduleService: ScheduleService
+  ) { }
 
   @Get()
   async getAllDoctors(@Query() filters: DoctorSearchFiltersDto) {
@@ -35,14 +40,12 @@ export class DoctorController {
 
 
   @Get('my-profile')
-  @auth([RoleEnum.doctor])
   async getMyProfile(@Request() req) {
     return this.doctorService.getMyProfile(req.user._id);
   }
 
 
   @Put('my-profile')
-  @auth([RoleEnum.doctor])
   async updateMyProfile(
     @Request() req,
     @Body() updateDoctorDto: UpdateDoctorDto,
@@ -52,21 +55,18 @@ export class DoctorController {
 
 
   @Get('my-stats')
-  @auth([RoleEnum.doctor])
   async getMyStats(@Request() req) {
     return this.doctorService.getMyStats(req.user._id);
   }
 
 
   @Post('my-clinics/:clinicId')
-  @auth([RoleEnum.doctor])
   async addClinic(@Request() req, @Param('clinicId') clinicId: string) {
     return this.doctorService.addClinic(req.user._id, clinicId);
   }
 
 
   @Delete('my-clinics/:clinicId')
-  @auth([RoleEnum.doctor])
   async removeClinic(@Request() req, @Param('clinicId') clinicId: string) {
     return this.doctorService.removeClinic(req.user._id, clinicId);
   }
@@ -84,5 +84,19 @@ export class DoctorController {
   @Get(':id')
   async getDoctorById(@Param('id') id: string) {
     return this.doctorService.getDoctorById(id);
+  }
+
+
+
+
+  @Get(':doctorUserId/available-slots')
+  async getAvailableSlots(
+    @Param('doctorUserId') doctorUserId: string,
+    @Query() getAvailableSlotsDto: GetAvailableSlotsDto,
+  ) {
+    return this.scheduleService.getAvailableSlots(
+      doctorUserId,
+      getAvailableSlotsDto,
+    );
   }
 }

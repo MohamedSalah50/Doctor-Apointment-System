@@ -80,13 +80,13 @@ export class Appointment implements IAppointment {
   cancellationReason?: string;
 
   // ==================== FEES & PAYMENT ====================
-  @Prop({ type: Number, required: true, min: 0 })
+  @Prop({ type: Number, required: false, min: 0 })
   consultationFee: number;
 
-  @Prop({ type: Number, required: true, min: 0, default: 0 })
+  @Prop({ type: Number, required: false, min: 0, default: 0 })
   platformFee: number;
 
-  @Prop({ type: Number, required: true, min: 0 })
+  @Prop({ type: Number, required: false, min: 0 })
   totalFee: number;
 
   @Prop({ type: Boolean, default: false, index: true })
@@ -272,12 +272,12 @@ AppointmentSchema.pre(['find', 'findOne'], function (next) {
 //   this: AppointmentDocument,
 // ) {
 //   this.status = AppointmentStatusEnum.noShow;
-  
+
 //   if (!this.metadata) {
 //     this.metadata = {};
 //   }
 //   this.metadata.noShowCount = (this.metadata.noShowCount || 0) + 1;
-  
+
 //   return await this.save();
 // };
 
@@ -287,20 +287,20 @@ AppointmentSchema.pre(['find', 'findOne'], function (next) {
 //   newDate: Date,
 // ) {
 //   const oldDate = this.scheduledDate;
-  
+
 //   this.scheduledDate = newDate;
 //   this.status = AppointmentStatusEnum.rescheduled;
-  
+
 //   if (!this.metadata) {
 //     this.metadata = {};
 //   }
-  
+
 //   this.metadata.rescheduledCount = (this.metadata.rescheduledCount || 0) + 1;
-  
+
 //   if (!this.metadata.rescheduledFrom) {
 //     this.metadata.rescheduledFrom = oldDate;
 //   }
-  
+
 //   return await this.save();
 // };
 
